@@ -70,15 +70,18 @@ void main() {
     vec2 pol = vec2(min(length(uv), 1), atan2(uv));
     vec3 f = vec3(0, 0, 0);
     float m, n;
-    f += standing_wave(pol + vec2(0, 0), 7, 4) / 2;
-    f += standing_wave(pol + vec2(0, 0), 6, 6) / 2;
+    f += standing_wave(pol + vec2(0, 0), 2, 3);
+    f += standing_wave(pol + vec2(0, 0), 5, 7) / 2;
 
-    //f += standing_wave(pol - 2 * vec2(0, time_now/1e4), 4, 5) / 3;
-    //f += standing_wave(pol, 5, 6) / 3;
     vec3 normal = normalize(vec3(-f.yz, 1.)) * .5 + .5;
-    gl_FragColor = mix(
-                        vec4(vec3(1,1,1) * (f.x * .5 + .5), 1),
-                        vec4(normal, 1),
-                        0
-    );
+
+    float intensity;
+    //intensity = (1/(pow(length(f.yz),2) + .01)); // gradient ^ -2 (maxima & minima)
+    intensity = (.01/(pow(length(f.x),2) + .01)); // height ^ -2 (intersection w\ y plane)
+    //intensity = f.x * .5 + .5;
+    //intensity = f.y * f.z;
+    gl_FragColor = vec4(normal, 1); // normal lighting
+    gl_FragColor = vec4(colormap(intensity), 1);
+    gl_FragColor = vec4(vec3(1,1,1) * intensity, 1);
+    
 }
