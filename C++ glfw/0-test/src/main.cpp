@@ -4,33 +4,66 @@
 #include <thread>
 #include "engine/util.h"
 #include "engine/types.h"
-#include "engine/render.cpp"
+#include <fstream>
+#include <iostream>
+
+u32 compile_shader(const std::string& file_path, u32 shader_type) {
+    std::ifstream stream(file_path);
+    std::string data((std::istreambuf_iterator<char>(stream)),
+                 std::istreambuf_iterator<char>());
+    u32 shader = glCreateShader(shader_type);
+    const char* src = data.c_str();
+    glShaderSource(shader, 1, &src, NULL);
+    int success;
+    glCompileShader(shader);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+    if (success == GL_FALSE) {
+        int length;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+        char msg[512];
+        glGetShaderInfoLog(shader, 512, NULL, msg);
+        ERROR_EXIT("Error compiling GLenum(%x) shader. %s\n", shader_type, msg);
+    }
+    return shader;
+}
+
+u32 create_shader(const std::string& vert_path, const std::string& frag_path) {
+    int success;
+    char log[512];
+    u32 vs = compile_shader(vert_path, GL_VERTEX_SHADER),
+        fs = compile_shader(frag_path, GL_FRAGMENT_SHADER);
+
+    u32 program = glCreateProgram();
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glBindFragDataLocation(program, 0, "fragColor");
+    glLinkProgram(program);
+    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(program, 512, NULL, log);
+        ERROR_EXIT("Error linking shader. %s\n", log);
+    }
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+    return program;
+}
 
 int main()
 {
     GLFWwindow* window;
-
     if (!glfwInit())
         ERROR_EXIT("Couldn't initialize GLFW\n");
     
-    // Require: OpenGL context's version >= 3.2
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-
     window = glfwCreateWindow(640, 480, "", NULL, NULL);
     if (!window) {
         glfwTerminate();
         ERROR_EXIT("Couldn't create window\n");
     }
-    
+
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-    
 
     u32 shader = create_shader("./shaders/default.vert", "./shaders/default.frag");
     glUseProgram(shader);
@@ -49,17 +82,17 @@ int main()
     {
         int error;
 
-        glClearColor(.05f,.1f,.05f,1);
+        glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT);
-
-        /*
+        
         glBegin(GL_TRIANGLES);
+        glColor3f(1.f, 0.f, 0.f);
         glVertex2f(-.5,0);
         glVertex2f(0, .5);
         glVertex2f(0,-.5);
         glEnd();
-        */
-       
+        
+       /*
         u32 vao, vbo, ebo;
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
@@ -82,8 +115,8 @@ int main()
         glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
         if ((error = glGetError()) != 0) ERROR_EXIT("OpenGL error: %x\n", error);
-        
-        
+        */
+
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
