@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "../vendor/win32/include"
+                "../vendor/win32/include",
+                "include"
             ],
             "defines": [
                 "_DEBUG",
