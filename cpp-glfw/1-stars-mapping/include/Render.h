@@ -43,8 +43,9 @@ class VertexBuffer {
         u32 renderer_id;
         u32 m_length;
     public:
-        VertexBuffer(const f32* data, u32 length);
+        VertexBuffer(u32 length);
         ~VertexBuffer();
+        void load(const f32* data);
         void bind();
         void unbind();
         inline u32 length() const { return m_length; }

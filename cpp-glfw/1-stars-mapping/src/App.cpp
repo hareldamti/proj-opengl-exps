@@ -8,6 +8,7 @@ InputState::InputState() {
 bool InputState::is_pressed(u32 glfw_key_code) {
     if (glfw_key_code <= GLFW_KEY_GRAVE_ACCENT) return pressed[ (glfw_key_code - INPUT_GLFW_KEY_OFFSET_0) ];
     if (glfw_key_code >= GLFW_KEY_ESCAPE) return pressed[ (glfw_key_code - INPUT_GLFW_KEY_OFFSET_1) ];
+    return 0;
 }
 void InputState::set_key(u32 glfw_key_code, bool state) {
     if (glfw_key_code <= GLFW_KEY_GRAVE_ACCENT) pressed[ (glfw_key_code - INPUT_GLFW_KEY_OFFSET_0) ] = state;

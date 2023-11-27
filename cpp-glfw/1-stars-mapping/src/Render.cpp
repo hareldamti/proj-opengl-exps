@@ -169,11 +169,13 @@ Shader::~Shader() {
 
 
 
-VertexBuffer::VertexBuffer(const f32* data, u32 length): m_length(length) {
+VertexBuffer::VertexBuffer(u32 length): m_length(length) {
     GLCall(glGenBuffers(1, &renderer_id));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, renderer_id));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, length * sizeof(f32), data, GL_DYNAMIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, length * sizeof(f32), 0, GL_DYNAMIC_DRAW));
 }
+
+void VertexBuffer::load(const f32* data) { GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, m_length * sizeof(f32), data)); }
 
 void VertexBuffer::bind() { GLCall(glBindBuffer(GL_ARRAY_BUFFER, renderer_id)); }
 
