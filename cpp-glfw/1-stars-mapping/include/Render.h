@@ -62,6 +62,8 @@ class IndexBuffer {
         inline u32 length() const { return m_length; }
 };
 
+
+
 class RenderState {
     public:
         GLFWwindow* window;

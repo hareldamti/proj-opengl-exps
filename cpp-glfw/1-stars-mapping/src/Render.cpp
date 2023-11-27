@@ -1,4 +1,4 @@
-#include "render.h"
+#include "Render.h"
 
 u32 compile_shader(const std::string& glsl_code, u32 shader_type) {
     u32 shader = glCreateShader(shader_type);
@@ -53,6 +53,8 @@ GLFWwindow* render_init_window(int width, int height, const std::string& title) 
     LOG_DEBUG("Vendor: %s", glGetString(GL_VENDOR));
     LOG_DEBUG("Renderer: %s", glGetString(GL_RENDERER));
     LOG_DEBUG("Version: %s", glGetString(GL_VERSION));
+    GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+    GLCall(glEnable(GL_BLEND));
     return window;
 }
 
