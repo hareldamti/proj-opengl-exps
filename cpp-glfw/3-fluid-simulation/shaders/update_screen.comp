@@ -1,0 +1,9 @@
+#version 460 core
+layout (local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+layout (rgba32f) uniform image2D uScreenTex;
+layout (rgba32f) uniform image2D uCurrProps;
+void main() {
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+    float intensity = imageLoad(uCurrProps, pixel).w;
+    imageStore(uScreenTex, pixel, vec4(vec3(intensity),1));
+}
