@@ -23,18 +23,13 @@ GLFWwindow* render_init_window(int width, int height, const std::string& title) 
 RenderState::RenderState(int width, int height, const std::string& title) :
     window(render_init_window(width, height, title)),
     width(width),
-    height(height),
-    screen_tex(width, height, (f32*)0){
+    height(height){
     }
 
-void RenderState::draw_triangles(RenderShader& shader, VertexBuffer& vb, IndexBuffer& ib) {
-    shader.bind();
-    //screen_tex.bind(0);
-    shader.set_uniform("u_Texture", 0);
+void RenderState::draw_triangles(VertexBuffer& vb, IndexBuffer& ib) {
     vb.bind();
     ib.bind();
     GLCall(glDrawElements(GL_TRIANGLES, ib.length(), GL_UNSIGNED_INT, 0));
-    //screen_tex.unbind();
 }
 
 

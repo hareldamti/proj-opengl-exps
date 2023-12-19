@@ -12,6 +12,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "types.h"
 
+#define M_PI 3.1415926535897932384626433832795
 #define ERROR_EXIT(...) { fprintf(stderr, __VA_ARGS__); exit(1); }
 #define ERROR_RETURN(R, ...) { fprintf(stderr, __VA_ARGS__); return R; }
 #define LOG_DEBUG(...) { fprintf(stderr,"DEBUG:\t"); fprintf(stderr, __VA_ARGS__); fprintf(stderr, "\n"); }

@@ -18,14 +18,14 @@ u32 compile_shader(const std::string& glsl_code, u32 shader_type) {
     return shader;
 }
 
-u32 link_shader(u32 shader_id1, u32 shader_id2) {
+u32 link_shader(u32 shader_id1, u32 shader_id2, u32 shader_id3) {
     int success;
     char log[512];
 
     u32 program = glCreateProgram();
     glAttachShader(program, shader_id1);
     if (shader_id2) glAttachShader(program, shader_id2);
-   
+    if (shader_id3) glAttachShader(program, shader_id3);
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if (!success) {
@@ -37,7 +37,9 @@ u32 link_shader(u32 shader_id1, u32 shader_id2) {
     return program;
 }
 
-Shader::Shader(const std::string& name): name(name), renderer_id(0) {}
+Shader::Shader(const std::string& name) : name(name) {}
+
+RenderShader::RenderShader(): Shader("<>") {}
 
 RenderShader::RenderShader(const std::string& vert_path, const std::string& frag_path) : Shader("< Render: " + vert_path + " , " + frag_path + " >") {
     u32 vert_id = compile_shader(read_file(vert_path), GL_VERTEX_SHADER);
@@ -45,6 +47,26 @@ RenderShader::RenderShader(const std::string& vert_path, const std::string& frag
     renderer_id = link_shader(vert_id, frag_id);
     GLCall(glGenVertexArrays(1, &vao));
     GLCall(glBindVertexArray(vao));
+}
+
+void RenderShader::init(const std::string& vert_path, const std::string& frag_path) {
+    name = "< Render: " + vert_path + " , " + frag_path + " >";
+    u32 vert_id = compile_shader(read_file(vert_path), GL_VERTEX_SHADER);
+    u32 frag_id = compile_shader(read_file(frag_path), GL_FRAGMENT_SHADER);
+    renderer_id = link_shader(vert_id, frag_id);
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
+    set_attributes(2, "pos", 2, "uv", 2);
+}
+void RenderShader::init_util(const std::string& vert_path, const std::string& frag_util_path, const std::string& frag_path) {
+    name = "< Render: " + vert_path + " , " + frag_path + " >";
+    u32 vert_id = compile_shader(read_file(vert_path), GL_VERTEX_SHADER);
+    u32 util_id = compile_shader(read_file(frag_util_path), GL_FRAGMENT_SHADER);
+    u32 frag_id = compile_shader(read_file(frag_path), GL_FRAGMENT_SHADER);
+    renderer_id = link_shader(vert_id, util_id, frag_id);
+    GLCall(glGenVertexArrays(1, &vao));
+    GLCall(glBindVertexArray(vao));
+    set_attributes(2, "pos", 2, "uv", 2);
 }
 
 ComputeShader::ComputeShader(const std::string& comp_path) : Shader("< Compute: " + comp_path + " >") {

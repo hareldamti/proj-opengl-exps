@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 u32 compile_shader(const std::string& glsl_code, u32 shader_type);
-u32 link_shader(u32 shader_id1, u32 shader_id2 = 0);
+u32 link_shader(u32 shader_id1, u32 shader_id2 = 0, u32 shader_id3 = 0);
 
 class Shader {
     protected:
@@ -16,7 +16,7 @@ class Shader {
         i32 get_uniform_location(const std::string& name);
     
     public:
-        const std::string name;
+        std::string name;
         Shader(const std::string& name);
         virtual void bind();
         void unbind();
@@ -32,7 +32,10 @@ class RenderShader : public Shader {
     private:
         u32 vao;
     public:
+        RenderShader();
         RenderShader(const std::string& vert_path, const std::string& frag_path);
+        void init(const std::string& vert_path, const std::string& frag_path);
+        void init_util(const std::string& vert_path, const std::string& frag_util_path, const std::string& frag_path);
         void RenderShader::set_attributes(int n_attributes,...);
         virtual void bind();
 };

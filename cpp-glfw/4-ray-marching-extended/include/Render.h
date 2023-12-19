@@ -64,9 +64,8 @@ class RenderState {
         GLFWwindow* window;
         f32 width;
         f32 height;
-        Texture screen_tex;
         RenderState(int width, int height, const std::string& title);
-        void draw_triangles(RenderShader& shader, VertexBuffer& vb, IndexBuffer& ib);
+        void RenderState::draw_triangles(VertexBuffer& vb, IndexBuffer& ib);
         void clear_frame();
         void update_frame();
         ~RenderState();
